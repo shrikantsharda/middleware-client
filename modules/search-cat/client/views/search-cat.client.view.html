@@ -1,0 +1,24 @@
+<div ng-controller="SearchCatController">
+  <h3 class="col-md-12 text-center">Search for items</h3>
+  <div class="col-xs-offset-2 col-xs-8 col-md-offset-4 col-md-4">
+    <form name="searchForm" ng-submit="searchCatalogue(queryParam, paramVal)" class="submit">
+      <fieldset>
+        <div class="form-group">
+          <label for="queryParam">Parameter</label>
+          <input type="text" id="queryParam" name="queryParam" class="form-control" ng-model="queryParam" placeholder="Query Parameter">
+        </div>
+        <div class="form-group">
+          <label for="paramVal">Value</label>
+          <input type="text" id="paramVal" name="paramVal" class="form-control" ng-model="paramVal" placeholder="Parameter Value">
+        </div>
+        <div class="text-center form-group">
+          <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+  <div>
+    <iframe name='searchCatIFrame' id="searchCatIFrame" frameborder="0" border="0" cellspacing="0" style="border-style: none;width: 100%;">
+    </iframe>
+  </div>
+</div>

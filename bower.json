@@ -1,6 +1,6 @@
 {
-  "name": "meanjs",
-  "description": "Fullstack JavaScript with MongoDB, Express, AngularJS, and Node.js.",
+  "name": "middleware-client",
+  "description": "A client to receive data from RabbitMQ and query catalogue",
   "homepage": "http://meanjs.org/",
   "license": "MIT",
   "dependencies": {
