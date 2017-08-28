@@ -18,7 +18,7 @@
     </form>
   </div>
   <div class="list-group" style="float:left; clear:left">
-    <a ng-repeat="item in items" class="list-group-item">
+    <a ng-repeat="item in items" class="list-group-item" ui-sref="item({ itemId: item.href })">
       <h4 class="list-group-item-heading" ng-bind="item.href"></h4>
     </a>
   </div>

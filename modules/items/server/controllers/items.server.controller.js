@@ -10,53 +10,57 @@ var path = require('path'),
   _ = require('lodash');
 
 /**
- * Create a Search cat
+ * Create a Item
  */
 exports.create = function (req, res) {
 
 };
 
 /**
- * Show the current Search cat
+ * Show the current Item
  */
 exports.read = function (req, res) {
 
 };
 
 /**
- * Update a Search cat
+ * Update a Item
  */
 exports.update = function (req, res) {
 
 };
 
 /**
- * Delete an Search cat
+ * Delete an Item
  */
 exports.delete = function (req, res) {
 
 };
 
 /**
- * List of Search cats
+ * List of Items
  */
 exports.list = function (req, res) {
+
+};
+
+exports.loadData = function (req, res) {
   var request = require('request');
-  // var url = 'http://10.156.14.5:8001/cat';
-  // console.log(req.query);
   var options = {
     method: 'GET',
-    uri: config.catServer.uri,
-    qs: req.query,
-    json: true,
+    uri: config.broker.uri + '?name=' + config.broker.queue,
+    // qs: {
+    //   name: config.broker.queue
+    // },
+    //json: true,
     headers: {
-      apikey : config.catServer.apikey,
-      'Content-Type': 'application/json'
+      apikey : config.broker.apikey,
     }
   };
   request(options, function(err, response, body) {
     if (!err) {
-      res.jsonp(body);
+      res.send(body);
+      console.log(body);
     } else {
       res.send(err);
     }

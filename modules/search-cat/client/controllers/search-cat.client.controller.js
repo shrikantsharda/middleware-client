@@ -9,8 +9,6 @@
 
   function SearchCatController($scope, $http) {
     var vm = this;
-    var catServer = 'https://smartcity.rbccps.org/api/0.1.0/cat';
-    // var catServer = 'http://localhost:8001/cat';
 
     $scope.searchCatalogue = function(queryParam, paramVal) {
       var query = {};
