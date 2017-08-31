@@ -5,9 +5,9 @@
     .module('items')
     .controller('ItemsController', ItemsController);
 
-  ItemsController.$inject = ['$scope', '$stateParams', '$http', 'Socket'];
+  ItemsController.$inject = ['$scope', '$stateParams', '$http', 'Socket', 'Authentication', '$state', '$window'];
 
-  function ItemsController($scope, $stateParams, $http, Socket) {
+  function ItemsController($scope, $stateParams, $http, Socket, Authentication, $state, $window) {
     var vm = this;
 
     // Items controller logic
@@ -24,26 +24,51 @@
       //   })
       //   .error(function(err) {console.log(err);});
 
+      if (!Authentication.user) {
+        $state.go('authentication.signin');
+      }
+
       // Make sure the Socket is connected
       if (!Socket.socket) {
         Socket.connect();
       }
 
+      var eventName = $stateParams.itemId + ':' + Authentication.user.username;
+
       // Add an event listener to the 'chatMessage' event
-      Socket.on($stateParams.itemId, function (arg) {
-        console.log(arg);
+      Socket.on(eventName, function (arg) {
+        console.log(JSON.parse(arg));
       });
 
-      sendTest($stateParams.itemId);
+      Socket.on('SocketClosed', function() {
+        console.log('Socket Closed');
+      }); 
+
+      sendRequest({
+        // username: Authentication.user.username,
+        itemId: $stateParams.itemId
+      });
+
+      var windowElement = angular.element($window);
+      windowElement.on('beforeunload', function() {
+        console.log('Lol');
+        Socket.emit('destroyConn', Authentication.user.username);
+      });
+
+      $scope.$on('$locationChangeStart', function(event) {
+        console.log('Hi');
+        Socket.emit('destroyConn', Authentication.user.username);
+      });
 
       // Remove the event listener when the controller instance is destroyed
       $scope.$on('$destroy', function () {
-        Socket.removeListener($stateParams.itemId);
+        Socket.emit('destroyConn', Authentication.user.username);
+        Socket.removeListener(eventName);
       });
     }
 
-    function sendTest(arg) {
-      Socket.emit('testEventSend', arg);
+    function sendRequest(arg) {
+      Socket.emit('loadData', arg);
     }
   }
 })();
