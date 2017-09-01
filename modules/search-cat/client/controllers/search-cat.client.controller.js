@@ -5,9 +5,9 @@
     .module('search-cat')
     .controller('SearchCatController', SearchCatController);
 
-  SearchCatController.$inject = ['$scope', '$http'];
+  SearchCatController.$inject = ['$scope', '$http', '$state'];
 
-  function SearchCatController($scope, $http) {
+  function SearchCatController($scope, $http, $state) {
     var vm = this;
 
     $scope.searchCatalogue = function(queryParam, paramVal) {
@@ -19,6 +19,11 @@
           $scope.items = res.items;
         })
         .error(function(err) {console.log(err);});
+    };
+
+    $scope.onItemClick = function(item) {
+      // searchCatService.clickedItem = item;
+      $state.go('item', { itemId: item.href });
     };
 
     init();

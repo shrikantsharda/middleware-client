@@ -95,3 +95,30 @@ exports.loadData = function (arg) {
   return 'Controller receives arg for ' + arg;
   
 };
+
+exports.searchItem = function(req, res) {
+  var request = require('request');
+  // var url = 'http://10.156.14.5:8001/cat';
+  // console.log(req.query);
+  var options = {
+    method: 'GET',
+    uri: config.catServer.uri,
+    qs: req.query,
+    json: true,
+    headers: {
+      apikey : config.catServer.apikey,
+      'Content-Type': 'application/json'
+    }
+  };
+  request(options, function(err, response, body) {
+    if (!err) {
+      if (body.items && body.items.length === 1) {
+        res.jsonp(body.items[0]);
+      } else {
+        res.sendStatus(404);
+      }
+    } else {
+      res.send(err);
+    }
+  });
+};
