@@ -56,6 +56,11 @@ module.exports = function (io, socket) {
     }
   });
 
+  socket.on('debugEvent', function(arg) {
+    console.log('Debug event fired');
+    console.log(arg);
+  });
+
   // Emit the status event when a socket client is disconnected
   socket.on('disconnect', function () {
     // console.log('Socket conn closed');

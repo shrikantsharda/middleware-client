@@ -5,13 +5,19 @@
     .module('items')
     .controller('ItemsController', ItemsController);
 
-  ItemsController.$inject = ['$scope', '$stateParams', '$http', 'Socket', 'Authentication', '$state', '$window'];
+  ItemsController.$inject = ['$scope', '$stateParams', '$http', 'Socket', 'Authentication', '$state', '$window', '$location'];
 
-  function ItemsController($scope, $stateParams, $http, Socket, Authentication, $state, $window) {
+  function ItemsController($scope, $stateParams, $http, Socket, Authentication, $state, $window, $location) {
     var vm = this;
 
     // Items controller logic
     // ...
+
+    var windowElement = angular.element($window);
+    windowElement.on('beforeunload', function() {
+      console.log('Lol');
+      Socket.emit('destroyConn', Authentication.user.username);
+    });
 
     init();
 
@@ -45,19 +51,15 @@
       }); 
 
       sendRequest({
-        // username: Authentication.user.username,
         itemId: $stateParams.itemId
-      });
-
-      var windowElement = angular.element($window);
-      windowElement.on('beforeunload', function() {
-        console.log('Lol');
-        Socket.emit('destroyConn', Authentication.user.username);
       });
 
       $scope.$on('$locationChangeStart', function(event) {
         console.log('Hi');
-        Socket.emit('destroyConn', Authentication.user.username);
+        if ($location.$$url !== '/items/' + $stateParams.itemId) {
+          // Socket.emit('debugEvent', $location.$$url);
+          Socket.emit('destroyConn', Authentication.user.username);
+        }
       });
 
       // Remove the event listener when the controller instance is destroyed
