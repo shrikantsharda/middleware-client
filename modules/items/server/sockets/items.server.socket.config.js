@@ -22,8 +22,6 @@ module.exports = function (io, socket) {
   socket.on('loadData', function (arg) {
     console.log(socket.id);
     var key = arg.itemId;
-    var tempUser = socket.request.user.username;
-    var eventName = key + ':' + tempUser;
     temp[socket.id] = {};
     amqp.connect(config.broker.uri, function(err, conn) {
       console.log('broker connected');

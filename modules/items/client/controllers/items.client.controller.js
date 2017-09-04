@@ -13,19 +13,17 @@
     // Items controller logic
     // ...
 
+    var count = 0;
+
     var windowElement = angular.element($window);
     windowElement.on('beforeunload', function() {
       console.log('Lol');
       Socket.emit('destroyConn');
     });
 
-    // $scope.temp = $stateParams.itemId;
-    // $scope.item = $stateParams.item;
-
     init();
 
     function init() {
-      console.log($window.document.cookie);
       var data = {};
       data.id = $stateParams.itemId;
 
@@ -39,11 +37,12 @@
             Socket.connect();
           }
 
-          var eventName = $stateParams.itemId + ':' + Authentication.user.username;
-
           // Add an event listener to the 'chatMessage' event
-          Socket.on(eventName, function (arg) {
-            console.log(JSON.parse(arg));
+          Socket.on($stateParams.itemId, function (arg) {
+            // console.log(JSON.parse(arg));
+            $scope.itemData = JSON.parse(arg);
+            count++;
+            console.log('received:' + count);
           });
 
           Socket.on('SocketClosed', function() {
@@ -65,7 +64,7 @@
           // Remove the event listener when the controller instance is destroyed
           $scope.$on('$destroy', function () {
             Socket.emit('destroyConn');
-            Socket.removeListener(eventName);
+            Socket.removeListener($stateParams.itemId);
           });
         })
         .error(function(err) {
