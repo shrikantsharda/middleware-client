@@ -2,12 +2,12 @@
   'use strict';
 
   angular
-    .module('items'/*, ['search-cat']*/)
+    .module('items')
     .controller('ItemsController', ItemsController);
 
-  ItemsController.$inject = ['$scope', '$stateParams', '$http', 'Socket', 'Authentication', '$state', '$window', '$location'/*, 'searchCatService'*/];
+  ItemsController.$inject = ['$scope', '$stateParams', '$http', 'Socket', 'Authentication', '$state', '$window', '$location'];
 
-  function ItemsController($scope, $stateParams, $http, Socket, Authentication, $state, $window, $location/*, searchCatService*/) {
+  function ItemsController($scope, $stateParams, $http, Socket, Authentication, $state, $window, $location) {
     var vm = this;
 
     // Items controller logic
@@ -16,7 +16,7 @@
     var windowElement = angular.element($window);
     windowElement.on('beforeunload', function() {
       console.log('Lol');
-      Socket.emit('destroyConn', Authentication.user.username);
+      Socket.emit('destroyConn');
     });
 
     // $scope.temp = $stateParams.itemId;
@@ -25,7 +25,7 @@
     init();
 
     function init() {
-      // console.log($scope.item);
+      console.log($window.document.cookie);
       var data = {};
       data.id = $stateParams.itemId;
 
@@ -58,13 +58,13 @@
             console.log('Hi');
             if ($location.$$url !== '/items/' + $stateParams.itemId) {
               // Socket.emit('debugEvent', $location.$$url);
-              Socket.emit('destroyConn', Authentication.user.username);
+              Socket.emit('destroyConn');
             }
           });
 
           // Remove the event listener when the controller instance is destroyed
           $scope.$on('$destroy', function () {
-            Socket.emit('destroyConn', Authentication.user.username);
+            Socket.emit('destroyConn');
             Socket.removeListener(eventName);
           });
         })

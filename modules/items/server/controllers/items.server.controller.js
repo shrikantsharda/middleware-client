@@ -116,6 +116,7 @@ exports.searchItem = function(req, res) {
         res.jsonp(body.items[0]);
       } else {
         res.sendStatus(404);
+        // res.sendFile('404.item.server.view.html');
       }
     } else {
       res.send(err);

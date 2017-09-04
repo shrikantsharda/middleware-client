@@ -20,14 +20,14 @@ module.exports = function (io, socket) {
 
   // Send a chat messages to all connected sockets when a message is received
   socket.on('loadData', function (arg) {
-    console.log(socket.request.user);
+    console.log(socket.id);
     var key = arg.itemId;
     var tempUser = socket.request.user.username;
     var eventName = key + ':' + tempUser;
-    temp[tempUser] = {};
+    temp[socket.id] = {};
     amqp.connect(config.broker.uri, function(err, conn) {
       console.log('broker connected');
-      temp[tempUser].conn = conn;
+      temp[socket.id].conn = conn;
       conn.createChannel(function(err, ch) {
         var ex = 'topic_logs';
 
@@ -39,19 +39,18 @@ module.exports = function (io, socket) {
           ch.bindQueue(q.queue, ex, key);
 
           ch.consume(q.queue, function(msg) {
-            io.emit(eventName, msg.content.toString());
+            socket.emit(key, msg.content.toString());
             // console.log(" [x] %s:'%s'", msg.fields.routingKey, msg.content.toString());
           }, { noAck: true });
         });
       });
     });
-    // var temp = Items.loadData(arg);
   });
 
-  socket.on('destroyConn', function(username) {
-    if (temp[username] && temp[username].conn) {
-      temp[username].conn.close();
-      delete temp[username];
+  socket.on('destroyConn', function(arg) {
+    if (temp[socket.id] && temp[socket.id].conn) {
+      temp[socket.id].conn.close();
+      delete temp[socket.id];
       console.log('broker disconnected');
     }
   });
