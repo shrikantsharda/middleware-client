@@ -38,6 +38,7 @@ module.exports = function (io, socket) {
 
           ch.consume(q.queue, function(msg) {
             socket.emit(key, msg.content.toString());
+            console.log(socket.id);
             // console.log(" [x] %s:'%s'", msg.fields.routingKey, msg.content.toString());
           }, { noAck: true });
         });
@@ -60,6 +61,20 @@ module.exports = function (io, socket) {
 
   // Emit the status event when a socket client is disconnected
   socket.on('disconnect', function () {
-    // console.log('Socket conn closed');
+    console.log('Socket conn disconnected' + socket.id);
+    if (temp[socket.id] && temp[socket.id].conn) {
+      temp[socket.id].conn.close();
+      delete temp[socket.id];
+      console.log('broker disconnected');
+    }
+    socket.emit('SocketClosed');
+  });
+
+  socket.on('reconnect', function () {
+    console.log('Socket conn reconnected');
+  });
+
+  socket.on('connect', function () {
+    console.log('Socket conn connected' + socket.id);
   });
 };

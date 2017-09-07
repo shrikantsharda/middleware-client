@@ -45,8 +45,13 @@
             console.log('received:' + count);
           });
 
-          Socket.on('SocketClosed', function() {
-            console.log('Socket Closed');
+          Socket.on('disconnect', function() {
+            console.log('Socket Closed:');
+            console.log(Socket);
+
+            sendRequest({
+              itemId: $stateParams.itemId
+            });
           }); 
 
           sendRequest({
