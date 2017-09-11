@@ -18,7 +18,7 @@
     var windowElement = angular.element($window);
     windowElement.on('beforeunload', function() {
       console.log('Lol');
-      Socket.emit('destroyConn');
+      Socket.emit('destroyConn', $stateParams.itemId);
     });
 
     init();
@@ -58,18 +58,24 @@
             itemId: $stateParams.itemId
           });
 
+          Socket.emit('ping');
+
+          Socket.on('pong', function() {
+            Socket.emit('ping');
+          });
+
           $scope.$on('$locationChangeStart', function(event) {
             console.log('Hi');
             if ($location.$$url !== '/items/' + $stateParams.itemId) {
               // Socket.emit('debugEvent', $location.$$url);
-              Socket.emit('destroyConn');
+              Socket.emit('destroyConn', $stateParams.itemId);
             }
           });
 
           // Remove the event listener when the controller instance is destroyed
           $scope.$on('$destroy', function () {
-            Socket.emit('destroyConn');
-            Socket.removeListener($stateParams.itemId);
+            Socket.emit('destroyConn', $stateParams.itemId);
+            // Socket.removeListener($stateParams.itemId);
           });
         })
         .error(function(err) {

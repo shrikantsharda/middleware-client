@@ -23,7 +23,7 @@
 
     $scope.onItemClick = function(item) {
       // searchCatService.clickedItem = item;
-      $state.go('item', { itemId: item.href });
+      $state.go('item', { itemId: item.id });
     };
 
     init();

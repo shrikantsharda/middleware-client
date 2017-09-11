@@ -42,7 +42,6 @@ exports.delete = function (req, res) {
  */
 exports.list = function (req, res) {
   var request = require('request');
-  // var url = 'http://10.156.14.5:8001/cat';
   // console.log(req.query);
   var options = {
     method: 'GET',
