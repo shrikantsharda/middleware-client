@@ -38,43 +38,24 @@ var removeSocketFromTemp = function(socket) {
         return arr[i];
       }
     }
-    // if (found) {
-    //   break;
-    // }
   }
 };
 
 // Create the chat configuration
 module.exports = function (io, socket) {
-  // Emit the status event when a new socket client is connected
-  // io.emit('chatMessage', {
-  //   type: 'status',
-  //   text: 'Is now connected',
-  //   created: Date.now(),
-  //   profileImageURL: socket.request.user.profileImageURL,
-  //   username: socket.request.user.username
-  // });
 
   // Send a chat messages to all connected sockets when a message is received
   socket.on('loadData', function (arg) {
     // console.log(socket.request.connection.remoteAddress);
     console.log(socket.id);
     var key = arg.itemId;
-    // temp[key] = {};
     if (tempConn && tempCh) {
       if (temp[key]) {
-        // var q = temp[key].q;
         temp[key].count++;
         temp[key].sockets.push(socket);
-        // tempCh.consume(q.queue, function(msg) {
-        //   socket.emit(key, msg.content.toString());
-        //   console.log(socket.id);
-        //   // console.log(" [x] %s:'%s'", msg.fields.routingKey, msg.content.toString());
-        // }, { noAck: true });
       } else {
         var ex = 'topic_logs';
         tempCh.assertQueue('', { exclusive: true }, function(err, q) {
-          // console.log(' [*] Waiting for logs. To exit press CTRL+C');
 
           tempCh.bindQueue(q.queue, ex, key);
           temp[key] = {};
@@ -89,7 +70,6 @@ module.exports = function (io, socket) {
             if (msg) {
               emitToSockets(temp[key].sockets, key, msg);
             }
-            // console.log(" [x] %s:'%s'", msg.fields.routingKey, msg.content.toString());
           }, { noAck: true });
         });
       }
@@ -101,7 +81,6 @@ module.exports = function (io, socket) {
         ch.assertExchange(ex, 'topic', { durable: false });
 
         ch.assertQueue('', { exclusive: true }, function(err, q) {
-          // console.log(' [*] Waiting for logs. To exit press CTRL+C');
 
           ch.bindQueue(q.queue, ex, key);
           temp[key] = {};
@@ -116,7 +95,6 @@ module.exports = function (io, socket) {
             if (msg) {
               emitToSockets(temp[key].sockets, key, msg);
             }
-            // console.log(" [x] %s:'%s'", msg.fields.routingKey, msg.content.toString());
           }, { noAck: true });
         });
       });
@@ -131,7 +109,6 @@ module.exports = function (io, socket) {
           ch.assertExchange(ex, 'topic', { durable: false });
 
           ch.assertQueue('', { exclusive: true }, function(err, q) {
-            // console.log(' [*] Waiting for logs. To exit press CTRL+C');
 
             ch.bindQueue(q.queue, ex, key);
             temp[key] = {};
@@ -140,15 +117,12 @@ module.exports = function (io, socket) {
             temp[key].sockets.push(socket);
             temp[key].count = 1;
 
-            // console.log(q);
-
             ch.consume(q.queue, function(msg) {
               // socket.emit(key, msg.content.toString());
               // console.log(socket.id);
               if (msg) {
                 emitToSockets(temp[key].sockets, key, msg);
               }
-              // console.log(" [x] %s:'%s'", msg.fields.routingKey, msg.content.toString());
             }, { noAck: true });
           });
         });
@@ -157,7 +131,6 @@ module.exports = function (io, socket) {
   });
 
   socket.on('destroyConn', function(key) {
-    // console.log(socket.request);
     console.log('comes here 1');
     if (temp[key]) {
       console.log('comes here 2');
@@ -212,13 +185,6 @@ module.exports = function (io, socket) {
       }
     }
     console.log('Socket conn disconnected: ' + socket.id);
-    // if (temp[socket.id] && temp[socket.id].conn) {
-    //   temp[socket.id].conn.close();
-    //   delete temp[socket.id];
-    //   console.log('broker disconnected');
-    // }
-    // socket.emit('SocketClosed');
-    // console.log('Client Count: ' + io.engine.clientsCount);
   });
 
   socket.on('ping', function() {
