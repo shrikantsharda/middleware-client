@@ -3,8 +3,8 @@
 module.exports = {
   app: {
     title: 'Middleware Client',
-    description: 'Full-Stack JavaScript with MongoDB, Express, AngularJS, and Node.js',
-    keywords: 'mongodb, express, angularjs, node.js, mongoose, passport',
+    description: 'A Web App to act as a client for the Smart City Middleware',
+    keywords: 'smart city, middleware, RabbitMQ, Elasticsearch, Catalogue Server, MongoDB, NodeJS',
     googleAnalyticsTrackingID: process.env.GOOGLE_ANALYTICS_TRACKING_ID || 'GOOGLE_ANALYTICS_TRACKING_ID'
   },
   port: process.env.PORT || 3000,

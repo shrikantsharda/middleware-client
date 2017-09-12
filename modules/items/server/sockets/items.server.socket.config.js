@@ -146,6 +146,8 @@ module.exports = function (io, socket) {
         if (Object.keys(temp).length === 0) {
           tempConn.close();
           console.log('broker disconnected');
+          tempCh = undefined;
+          tempConn = undefined;
         }
         socket.disconnect(true);
         console.log('Client Count: ' + io.engine.clientsCount);
@@ -178,6 +180,8 @@ module.exports = function (io, socket) {
           // if (Object.keys(temp).length === 0) {
           //   tempConn.close();
           //   console.log('broker disconnected');
+          //   tempConn = undefined;
+          //   tempCh = undefined;
           // }
           // socket.disconnect(true);
           console.log('Client Count: ' + io.engine.clientsCount);
