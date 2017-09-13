@@ -5,15 +5,17 @@
     .module('items')
     .controller('ItemsController', ItemsController);
 
-  ItemsController.$inject = ['$scope', '$stateParams', '$http', 'Socket', 'Authentication', '$state', '$window', '$location'];
+  ItemsController.$inject = ['$scope', '$stateParams', '$http', 'Socket', 'Authentication', '$state', '$window', '$location', '$interval'];
 
-  function ItemsController($scope, $stateParams, $http, Socket, Authentication, $state, $window, $location) {
+  function ItemsController($scope, $stateParams, $http, Socket, Authentication, $state, $window, $location, $interval) {
     var vm = this;
 
     // Items controller logic
     // ...
 
     var count = 0;
+
+    var d3 = $window.d3;
 
     var windowElement = angular.element($window);
     windowElement.on('beforeunload', function() {
@@ -37,10 +39,17 @@
         duration: 0,
         yAxis: {
           tickFormat: function(d) {
+            // return Math.round(d * 10) / 10;
             return d3.format('.01f')(d);
           }
         },
-        yDomain: [-1,1]
+        xAxis: {
+          tickFormat: function(d) {
+            // return Math.round(d * 10) / 10;
+            return d3.time.format('%I:%M:%S')(new Date(d));
+          }
+        },
+        // yDomain: [-1,1]
       }
     };
 
@@ -51,12 +60,71 @@
     var x = 0;
     setInterval(function(){
       if (!$scope.run) return;
-      $scope.data[0].values.push({ x: x, y: Math.random() - 0.5 });
+      $scope.data[0].values.push({ x: Date.now(), y: Math.random() - 0.5 });
       if ($scope.data[0].values.length > 20) $scope.data[0].values.shift();
       x++;
       
       $scope.$apply(); // update both chart
-    }, 500); 
+    }, 5000); 
+
+    var maximum = document.getElementById('container').clientWidth / 2 || 300;
+    $scope.data1 = [[]];
+    $scope.labels1 = [];
+    $scope.options1 = {
+      // animation: {
+      //   duration: 0
+      // },
+      animation: false,
+      elements: {
+        line: {
+          // borderWidth: 0.5,
+          tension: 0
+        },
+        // point: {
+        //   radius: 0
+        // }
+      },
+      legend: {
+        display: false
+      },
+      // scales: {
+      //   xAxes: [{
+      //     display: false
+      //   }],
+      //   yAxes: [{
+      //     display: false
+      //   }],
+      //   gridLines: {
+      //     display: false
+      //   }
+      // },
+      // tooltips: {
+      //   enabled: false
+      // }
+    };
+
+    // Update the dataset at 25FPS for a smoothly-animating chart
+    $interval(function () {
+      getLiveChartData();
+    }, 5000);
+
+    function getLiveChartData () {
+      if ($scope.data1[0].length) {
+        $scope.labels1 = $scope.labels1.slice(1);
+        $scope.data1[0] = $scope.data1[0].slice(1);
+      }
+
+      while ($scope.data1[0].length < 10) {
+        $scope.labels1.push('');
+        $scope.data1[0].push(getRandomValue($scope.data1[0]));
+      }
+    }
+
+    function getRandomValue (data) {
+      var l = data.length, previous = l ? data[l - 1] : 50;
+      var y = previous + Math.random() * 10 - 5;
+      return y < 0 ? 0 : y > 100 ? 100 : y;
+    }
 
     init();
 

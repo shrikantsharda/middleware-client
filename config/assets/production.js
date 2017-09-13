@@ -21,7 +21,9 @@ module.exports = {
         'public/lib/angular-cookies/angular-cookies.min.js',
         'public/lib/d3/d3.min.js',
         'public/lib/nvd3/build/nv.d3.min.js',
-        'public/lib/angular-nvd3/dist/angular-nvd3.min.js'
+        'public/lib/angular-nvd3/dist/angular-nvd3.min.js',
+        'public/lib/chart.js/dist/Chart.min.js',
+        'public/lib/angular-chart.js/dist/angular-chart.min.js'
       ]
     },
     css: 'public/dist/application.min.css',

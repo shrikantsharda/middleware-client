@@ -21,7 +21,9 @@ module.exports = {
         'public/lib/angular-cookies/angular-cookies.js',
         'public/lib/d3/d3.js',
         'public/lib/nvd3/build/nv.d3.js',
-        'public/lib/angular-nvd3/dist/angular-nvd3.js'
+        'public/lib/angular-nvd3/dist/angular-nvd3.js',
+        'public/lib/chart.js/dist/Chart.js',
+        'public/lib/angular-chart.js/dist/angular-chart.js'
       ],
       tests: ['public/lib/angular-mocks/angular-mocks.js']
     },

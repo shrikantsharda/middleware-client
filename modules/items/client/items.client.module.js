@@ -1,5 +1,5 @@
 (function (app) {
   'use strict';
 
-  app.registerModule('items', ['nvd3']);
+  app.registerModule('items', ['nvd3', 'chart.js']);
 }(ApplicationConfiguration));
