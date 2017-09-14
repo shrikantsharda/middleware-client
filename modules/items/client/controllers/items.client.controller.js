@@ -57,15 +57,15 @@
 
     $scope.run = true;
 
-    var x = 0;
-    setInterval(function(){
-      if (!$scope.run) return;
-      $scope.data[0].values.push({ x: Date.now(), y: Math.random() - 0.5 });
-      if ($scope.data[0].values.length > 20) $scope.data[0].values.shift();
-      x++;
+    // var x = 0;
+    // setInterval(function(){
+    //   if (!$scope.run) return;
+    //   $scope.data[0].values.push({ x: Date.now(), y: Math.random() - 0.5 });
+    //   if ($scope.data[0].values.length > 20) $scope.data[0].values.shift();
+    //   x++;
       
-      $scope.$apply(); // update both chart
-    }, 5000); 
+    //   $scope.$apply(); // update both chart
+    // }, 5000); 
 
     var maximum = document.getElementById('container').clientWidth / 2 || 300;
     $scope.data1 = [[]];
@@ -84,9 +84,9 @@
         //   radius: 0
         // }
       },
-      legend: {
-        display: false
-      },
+      // legend: {
+      //   display: false
+      // },
       // scales: {
       //   xAxes: [{
       //     display: false
@@ -104,27 +104,27 @@
     };
 
     // Update the dataset at 25FPS for a smoothly-animating chart
-    $interval(function () {
-      getLiveChartData();
-    }, 5000);
+    // $interval(function () {
+    //   getLiveChartData();
+    // }, 5000);
 
-    function getLiveChartData () {
-      if ($scope.data1[0].length) {
-        $scope.labels1 = $scope.labels1.slice(1);
-        $scope.data1[0] = $scope.data1[0].slice(1);
-      }
+    // function getLiveChartData () {
+    //   if ($scope.data1[0].length) {
+    //     $scope.labels1 = $scope.labels1.slice(1);
+    //     $scope.data1[0] = $scope.data1[0].slice(1);
+    //   }
 
-      while ($scope.data1[0].length < 10) {
-        $scope.labels1.push('');
-        $scope.data1[0].push(getRandomValue($scope.data1[0]));
-      }
-    }
+    //   while ($scope.data1[0].length < 10) {
+    //     $scope.labels1.push(d3.time.format('%I:%M:%S')(new Date(Date.now())));
+    //     $scope.data1[0].push(Math.round(getRandomValue($scope.data1[0]) * 10) / 10);
+    //   }
+    // }
 
-    function getRandomValue (data) {
-      var l = data.length, previous = l ? data[l - 1] : 50;
-      var y = previous + Math.random() * 10 - 5;
-      return y < 0 ? 0 : y > 100 ? 100 : y;
-    }
+    // function getRandomValue (data) {
+    //   var l = data.length, previous = l ? data[l - 1] : 50;
+    //   var y = previous + Math.random() * 10 - 5;
+    //   return y < 0 ? 0 : y > 100 ? 100 : y;
+    // }
 
     init();
 
@@ -148,6 +148,19 @@
             $scope.itemData = JSON.parse(arg);
             count++;
             console.log('received:' + count);
+
+            $scope.data[0].values.push({ x: $scope.itemData.dataSamplingInstant, y: $scope.itemData.caseTemperature });
+            if ($scope.data[0].values.length > 10) $scope.data[0].values.shift();
+
+            $scope.labels1.push(d3.time.format('%I:%M:%S')(new Date($scope.itemData.dataSamplingInstant)));
+            $scope.data1[0].push($scope.itemData.caseTemperature);
+            if ($scope.data1[0].length > 10) {
+              $scope.data1[0].shift();
+              $scope.labels1.shift();
+            }
+
+            $scope.$apply();
+
           });
 
           Socket.on('disconnect', function() {
