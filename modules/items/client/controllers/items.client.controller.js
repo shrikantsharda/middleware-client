@@ -5,15 +5,16 @@
     .module('items')
     .controller('ItemsController', ItemsController);
 
-  ItemsController.$inject = ['$scope', '$stateParams', '$http', 'Socket', 'Authentication', '$state', '$window', '$location', '$interval'];
+  ItemsController.$inject = ['$scope', '$stateParams', '$http', 'Socket', 'Authentication', '$state', '$window', '$location', '$interval', 'NgMap', '$document', '$compile'];
 
-  function ItemsController($scope, $stateParams, $http, Socket, Authentication, $state, $window, $location, $interval) {
+  function ItemsController($scope, $stateParams, $http, Socket, Authentication, $state, $window, $location, $interval, NgMap, $document, $compile) {
     var vm = this;
 
     // Items controller logic
     // ...
 
     var count = 0;
+    var numOfFields = 0;
 
     var d3 = $window.d3;
 
@@ -57,23 +58,16 @@
 
     $scope.run = true;
 
-    // var x = 0;
-    // setInterval(function(){
-    //   if (!$scope.run) return;
-    //   $scope.data[0].values.push({ x: Date.now(), y: Math.random() - 0.5 });
-    //   if ($scope.data[0].values.length > 20) $scope.data[0].values.shift();
-    //   x++;
-      
-    //   $scope.$apply(); // update both chart
-    // }, 5000); 
-
-    var maximum = document.getElementById('container').clientWidth / 2 || 300;
+    // var maximum = document.getElementById('container').clientWidth / 2 || 300;
     $scope.data1 = [[]];
     $scope.labels1 = [];
+    $scope.series1 = ['Case Temperature'];
     $scope.options1 = {
       // animation: {
       //   duration: 0
       // },
+      responsive: true,
+      maintainAspectRatio: false,
       animation: false,
       elements: {
         line: {
@@ -84,9 +78,9 @@
         //   radius: 0
         // }
       },
-      // legend: {
-      //   display: false
-      // },
+      legend: {
+        display: true
+      },
       // scales: {
       //   xAxes: [{
       //     display: false
@@ -103,29 +97,6 @@
       // }
     };
 
-    // Update the dataset at 25FPS for a smoothly-animating chart
-    // $interval(function () {
-    //   getLiveChartData();
-    // }, 5000);
-
-    // function getLiveChartData () {
-    //   if ($scope.data1[0].length) {
-    //     $scope.labels1 = $scope.labels1.slice(1);
-    //     $scope.data1[0] = $scope.data1[0].slice(1);
-    //   }
-
-    //   while ($scope.data1[0].length < 10) {
-    //     $scope.labels1.push(d3.time.format('%I:%M:%S')(new Date(Date.now())));
-    //     $scope.data1[0].push(Math.round(getRandomValue($scope.data1[0]) * 10) / 10);
-    //   }
-    // }
-
-    // function getRandomValue (data) {
-    //   var l = data.length, previous = l ? data[l - 1] : 50;
-    //   var y = previous + Math.random() * 10 - 5;
-    //   return y < 0 ? 0 : y > 100 ? 100 : y;
-    // }
-
     init();
 
     function init() {
@@ -138,6 +109,11 @@
         .success(function(res) {
           $scope.item = res;
           // Make sure the Socket is connected
+
+          NgMap.getMap().then(function(map) {
+            $scope.map = map;
+          });
+
           if (!Socket.socket) {
             Socket.connect();
           }
@@ -149,17 +125,26 @@
             count++;
             console.log('received:' + count);
 
+            var itemData = JSON.parse(arg);
+            if (count === 1) {
+              // var itemData = JSON.parse(arg);
+              createScopeData(itemData);
+              loadGraphs(itemData);
+            }
+
             $scope.data[0].values.push({ x: $scope.itemData.dataSamplingInstant, y: $scope.itemData.caseTemperature });
             if ($scope.data[0].values.length > 10) $scope.data[0].values.shift();
 
-            $scope.labels1.push(d3.time.format('%I:%M:%S')(new Date($scope.itemData.dataSamplingInstant)));
-            $scope.data1[0].push($scope.itemData.caseTemperature);
-            if ($scope.data1[0].length > 10) {
-              $scope.data1[0].shift();
-              $scope.labels1.shift();
-            }
+            // $scope.labels1.push(d3.time.format('%I:%M:%S')(new Date($scope.itemData.dataSamplingInstant)));
+            // $scope.data1[0].push($scope.itemData.caseTemperature);
+            // if ($scope.data1[0].length > 10) {
+            //   $scope.data1[0].shift();
+            //   $scope.labels1.shift();
+            // }
 
-            $scope.$apply();
+            // $scope.$apply();
+
+            insertGraphData(itemData);
 
           });
 
@@ -212,6 +197,67 @@
 
     function sendRequest(arg) {
       Socket.emit('loadData', arg);
+    }
+
+    function loadGraphs(data) {
+      var dataSamplingInstant = data.dataSamplingInstant;
+      delete data.dataSamplingInstant;
+      var graphDiv = document.getElementById('graphs');
+      var keysArr = Object.keys(data);
+      var rowDiv;
+      for (var i = 0; i < keysArr.length; i++) {
+        var key = keysArr[i];
+        if (i % 2 === 0) {
+          rowDiv = angular.element('<div class="row" style="height:150px"></div>');
+          angular.element(graphDiv).append(rowDiv);
+        }
+        var containerDiv = angular.element('<div id="container' + i + '" class="col-md-6" style="height:100%"></div>');
+        angular.element(rowDiv).append(containerDiv);
+        var graphEle = angular.element('<canvas width="100%" height="100%" id="hero-bar' + i + '" class="chart chart-line ng-isolate-scope" chart-data="graphData.' + key + '" chart-options="options1" chart-labels="graphLabels.' + key + '" style="display: block" legend="true" chart-series="graphSeries.' + key + '"></canvas>');
+        angular.element(containerDiv).append(graphEle);
+      }
+      $scope.$apply(function() {
+        $compile(graphDiv)($scope);
+      });
+      data.dataSamplingInstant = dataSamplingInstant;
+    }
+
+    function createScopeData(data) {
+      var dataSamplingInstant = data.dataSamplingInstant;
+      delete data.dataSamplingInstant;
+      var keysArr = Object.keys(data);
+      $scope.graphData = {};
+      $scope.graphLabels = {};
+      $scope.graphSeries = {};
+      for (var i = 0; i < keysArr.length; i++) {
+        var key = keysArr[i];
+        $scope.graphData[key] = [[]];
+        $scope.graphLabels[key] = [];
+        var tempArr = [];
+        tempArr.push(key);
+        $scope.graphSeries[key] = tempArr;
+      }
+      data.dataSamplingInstant = dataSamplingInstant;
+    }
+
+    function insertGraphData(data) {
+      var dataSamplingInstant = data.dataSamplingInstant;
+      delete data.dataSamplingInstant;
+      var keysArr = Object.keys(data);
+      for (var i = 0; i < keysArr.length; i++) {
+        var key = keysArr[i];
+        $scope.graphLabels[key].push(d3.time.format('%I:%M:%S')(new Date(dataSamplingInstant)));
+        $scope.graphData[key][0].push(data[key]);
+
+        if ($scope.graphData[key][0].length > 10) {
+          $scope.graphData[key][0].shift();
+          $scope.graphLabels[key].shift();
+        }
+      }
+
+      $scope.$apply();
+
+      data.dataSamplingInstant = dataSamplingInstant;
     }
   }
 })();

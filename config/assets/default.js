@@ -23,7 +23,9 @@ module.exports = {
         'public/lib/nvd3/build/nv.d3.js',
         'public/lib/angular-nvd3/dist/angular-nvd3.js',
         'public/lib/chart.js/dist/Chart.js',
-        'public/lib/angular-chart.js/dist/angular-chart.js'
+        'public/lib/angular-chart.js/dist/angular-chart.js',
+        'public/lib/ngmap/build/scripts/ng-map.js',
+        'https://maps.googleapis.com/maps/api/js?key=AIzaSyCVNedWYN-bpnM0ewNxWGIiEV9k6zjwzTM&callback=initMap'
       ],
       tests: ['public/lib/angular-mocks/angular-mocks.js']
     },

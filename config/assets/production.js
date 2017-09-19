@@ -23,7 +23,9 @@ module.exports = {
         'public/lib/nvd3/build/nv.d3.min.js',
         'public/lib/angular-nvd3/dist/angular-nvd3.min.js',
         'public/lib/chart.js/dist/Chart.min.js',
-        'public/lib/angular-chart.js/dist/angular-chart.min.js'
+        'public/lib/angular-chart.js/dist/angular-chart.min.js',
+        'public/lib/ngmap/build/scripts/ng-map.min.js',
+        'https://maps.googleapis.com/maps/api/js?key=AIzaSyCVNedWYN-bpnM0ewNxWGIiEV9k6zjwzTM'
       ]
     },
     css: 'public/dist/application.min.css',
