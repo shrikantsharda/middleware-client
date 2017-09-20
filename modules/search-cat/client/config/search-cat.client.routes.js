@@ -16,6 +16,12 @@
         templateUrl: 'modules/search-cat/client/views/search-cat.client.view.html',
         controller: 'SearchCatController',
         controllerAs: 'vm'
+      })
+      .state('tag', {
+        url: '/search-cat/:tag',
+        templateUrl: 'modules/search-cat/client/views/tag.search-cat.client.view.html',
+        controller: 'TagCtrlController',
+        controllerAs: 'vm'
       });
   }
 })();

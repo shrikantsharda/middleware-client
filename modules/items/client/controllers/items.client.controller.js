@@ -97,6 +97,12 @@
       // }
     };
 
+    angular.element($window).bind('resize', function() {
+      if ($scope.item && $scope.map) {
+        $scope.map.setCenter({lat:$scope.item.latitude.value, lng:$scope.item.longitude.value});
+      }
+    });
+
     init();
 
     function init() {

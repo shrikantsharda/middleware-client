@@ -1,0 +1,24 @@
+<div ng-controller="SearchCatController">
+
+  <h3 class="col-md-12 text-center">Search for Devices</h3>
+  <div class="col-md-12">
+    <div class="col-xs-offset-2 col-xs-8 col-md-offset-4 col-md-4" style="float: left">
+      <form name="searchForm">
+        <fieldset>
+          <div class="form-group">
+            <!--label for="queryParam">Tag: </label-->
+            <input type="text" id="searchStr" name="searchStr" class="form-control" ng-model="searchStr" placeholder="Enter ID of Item">
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  </div>
+
+  <div class="list-group" style="float:left;margin-top:20px">
+    <a ng-repeat="item in items | filter:{id:searchStr}" class="list-group-item" ui-sref="item({ itemId: item.id })">
+      <h4 class="list-group-item-heading" style="text-align:center" ng-bind="item.id"></h4>
+    </a>
+  </div>
+
+  <div class="spinner" id="spinnerDiv"><img src="modules/core/client/img/loaders/loader.gif"></div>
+</div>
