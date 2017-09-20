@@ -11,38 +11,9 @@ var path = require('path'),
   _ = require('lodash');
 
 /**
- * Create a Search cat
- */
-exports.create = function (req, res) {
-
-};
-
-/**
- * Show the current Search cat
- */
-exports.read = function (req, res) {
-
-};
-
-/**
- * Update a Search cat
- */
-exports.update = function (req, res) {
-
-};
-
-/**
- * Delete an Search cat
- */
-exports.delete = function (req, res) {
-
-};
-
-/**
  * List of Search cats
  */
 exports.list = function (req, res) {
-  // console.log(req.query);
   var options = {
     method: 'GET',
     uri: config.catServer.uri,
@@ -75,7 +46,6 @@ exports.getTags = function(req, res) {
   };
   request(options, function(err, response, body) {
     if (!err) {
-      // console.log(body.items.length);
       var tagsSet = new Set();
       for (var i = 0; i < body.items.length; i++) {
         for (var j = 0; j < body.items[i].tags.length; j++) {
@@ -83,9 +53,7 @@ exports.getTags = function(req, res) {
         }
       }
       var resArr = Array.from(tagsSet);
-      // console.log(resArr);
       res.send(resArr);
-      // res.jsonp(body);
     } else {
       res.send(err);
     }

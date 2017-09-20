@@ -40,13 +40,11 @@
         duration: 0,
         yAxis: {
           tickFormat: function(d) {
-            // return Math.round(d * 10) / 10;
             return d3.format('.01f')(d);
           }
         },
         xAxis: {
           tickFormat: function(d) {
-            // return Math.round(d * 10) / 10;
             return d3.time.format('%I:%M:%S')(new Date(d));
           }
         },
@@ -58,7 +56,6 @@
 
     $scope.run = true;
 
-    // var maximum = document.getElementById('container').clientWidth / 2 || 300;
     $scope.data1 = [[]];
     $scope.labels1 = [];
     $scope.series1 = ['Case Temperature'];
@@ -99,7 +96,7 @@
 
     angular.element($window).bind('resize', function() {
       if ($scope.item && $scope.map) {
-        $scope.map.setCenter({lat:$scope.item.latitude.value, lng:$scope.item.longitude.value});
+        $scope.map.setCenter({ lat:$scope.item.latitude.value, lng:$scope.item.longitude.value });
       }
     });
 
@@ -124,31 +121,19 @@
             Socket.connect();
           }
 
-          // Add an event listener to the 'chatMessage' event
           Socket.on($stateParams.itemId, function (arg) {
-            // console.log(JSON.parse(arg));
             $scope.itemData = JSON.parse(arg);
             count++;
             console.log('received:' + count);
 
             var itemData = JSON.parse(arg);
             if (count === 1) {
-              // var itemData = JSON.parse(arg);
               createScopeData(itemData);
               loadGraphs(itemData);
             }
 
             $scope.data[0].values.push({ x: $scope.itemData.dataSamplingInstant, y: $scope.itemData.caseTemperature });
             if ($scope.data[0].values.length > 10) $scope.data[0].values.shift();
-
-            // $scope.labels1.push(d3.time.format('%I:%M:%S')(new Date($scope.itemData.dataSamplingInstant)));
-            // $scope.data1[0].push($scope.itemData.caseTemperature);
-            // if ($scope.data1[0].length > 10) {
-            //   $scope.data1[0].shift();
-            //   $scope.labels1.shift();
-            // }
-
-            // $scope.$apply();
 
             insertGraphData(itemData);
 
@@ -176,7 +161,6 @@
           $scope.$on('$locationChangeStart', function(event) {
             console.log('Hi');
             if ($location.$$url !== '/items/' + $stateParams.itemId) {
-              // Socket.emit('debugEvent', $location.$$url);
               Socket.emit('destroyConn', $stateParams.itemId);
             }
           });
@@ -184,17 +168,11 @@
           // Remove the event listener when the controller instance is destroyed
           $scope.$on('$destroy', function () {
             Socket.emit('destroyConn', $stateParams.itemId);
-            // Socket.removeListener($stateParams.itemId);
           });
         })
         .error(function(err) {
           console.log('err');
         });
-      // $http.get('/api/items/item', { params: data })
-      //   .success(function(res) {
-      //     console.log(res);
-      //   })
-      //   .error(function(err) {console.log(err);});
 
       if (!Authentication.user) {
         $state.go('authentication.signin');

@@ -12,20 +12,11 @@
       </form>
     </div>
   </div>
-    <!--div class="col-md-6 col-md-offset-3"-->
   <div class="button-group col-md-12">
     <div>
       <h4>Tags: </h4>
-      <!--input type="text" ng-model="searchStr" class="inputText"><br-->
       <button ng-bind="tag" type="button" class="btn btn-primary" ng-repeat="tag in itemTags | filter:searchStr" style="margin-right:20px;margin-bottom:20px" ui-sref="tag({ tag: tag })"></button>
     </div>
     <div class="spinner" id="spinnerDiv"><img src="modules/core/client/img/loaders/loader.gif"></div>
   </div>
-
-
-    <!--/div-->
-  <!--div>
-    <iframe name='searchCatIFrame' id="searchCatIFrame" frameborder="0" border="0" cellspacing="0" style="border-style: none;width: 100%;">
-    </iframe>
-  </div-->
 </div>

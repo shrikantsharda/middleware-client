@@ -44,9 +44,7 @@ var removeSocketFromTemp = function(socket) {
 // Create the chat configuration
 module.exports = function (io, socket) {
 
-  // Send a chat messages to all connected sockets when a message is received
   socket.on('loadData', function (arg) {
-    // console.log(socket.request.connection.remoteAddress);
     console.log(socket.id);
     var key = arg.itemId;
     if (tempConn && tempCh) {
@@ -65,8 +63,6 @@ module.exports = function (io, socket) {
           temp[key].count = 1;
 
           tempCh.consume(q.queue, function(msg) {
-            // socket.emit(key, msg.content.toString());
-            // console.log(socket.id);
             if (msg) {
               emitToSockets(temp[key].sockets, key, msg);
             }
@@ -90,8 +86,6 @@ module.exports = function (io, socket) {
           temp[key].count = 1;
 
           ch.consume(q.queue, function(msg) {
-            // socket.emit(key, msg.content.toString());
-            // console.log(socket.id);
             if (msg) {
               emitToSockets(temp[key].sockets, key, msg);
             }
@@ -118,8 +112,6 @@ module.exports = function (io, socket) {
             temp[key].count = 1;
 
             ch.consume(q.queue, function(msg) {
-              // socket.emit(key, msg.content.toString());
-              // console.log(socket.id);
               if (msg) {
                 emitToSockets(temp[key].sockets, key, msg);
               }
@@ -160,7 +152,6 @@ module.exports = function (io, socket) {
     console.log(arg);
   });
 
-  // Emit the status event when a socket client is disconnected
   socket.on('disconnect', function () {
     console.log('In cb of disconnect event');
     var key = removeSocketFromTemp(socket);
@@ -169,21 +160,12 @@ module.exports = function (io, socket) {
       if (temp[key]) {
         console.log('comes here 2');
         temp[key].count--;
-        // removeObj(temp[key].sockets, socket);
         if (temp[key].count > 0) {
-          // socket.disconnect(true);
           console.log('Client Count: ' + io.engine.clientsCount);
         } else {
           tempCh.deleteQueue(temp[key].q.queue, function(err, ok) {});
           console.log('queue deleted');
           delete temp[key];
-          // if (Object.keys(temp).length === 0) {
-          //   tempConn.close();
-          //   console.log('broker disconnected');
-          //   tempConn = undefined;
-          //   tempCh = undefined;
-          // }
-          // socket.disconnect(true);
           console.log('Client Count: ' + io.engine.clientsCount);
         }
       }
@@ -200,9 +182,4 @@ module.exports = function (io, socket) {
   socket.on('reconnect', function () {
     console.log('Socket conn reconnected');
   });
-
-  // io.on('connect', function () {
-  //   console.log('Socket conn connected:' + socket.id);
-  //   console.log('Client Count: ' + io.engine.clientsCount);
-  // });
 };
